@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMD - Garten of Ratt</title>
+    <style>
+        body {
+            font-family: Consolas, monospace;
+            background-color: #000;
+            color: #00FF00;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #cmdWindow {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #00FF00;
+            padding: 10px;
+            background-color: #000;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+        }
+        #inputArea {
+            width: 100%;
+            font-size: 16px;
+            color: #00FF00;
+            background-color: #000;
+            border: none;
+            outline: none;
+        }
+        #outputArea p {
+            margin: 0;
+        }
+        .error {
+            color: orange;
+        }
+        .warning {
+            color: orange;
+        }
+
+        #cmdWindow::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #cmdWindow::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        #cmdWindow::-webkit-scrollbar-thumb {
+            background: #00FF00;
+            border: 1px solid #00FF00;
+        }
+
+        #cmdWindow::-webkit-scrollbar-thumb:hover {
+            background: #00CC00;
+        }
+
+        #cmdWindow::-webkit-scrollbar-corner {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="cmdWindow">
+        <p>C:\Windows\System32\cmd.exe</p>
+        <div id="outputArea">
+            <p>C:\>_</p>
+        </div>
+        <input type="text" id="inputArea" autofocus onkeydown="handleCommand(event)">
+    </div>
+
+    <script>
+        const outputArea = document.getElementById('outputArea');
+        const inputField = document.getElementById('inputArea');
+        let isTyping = false;
+        let isAdmin = false;
+
+        function handleCommand(e) {
+            if (e.key === 'Enter' && !isTyping) {
+                const command = inputField.value.trim();
+                if (command) {
+                    isTyping = true;
+                    processCommand(command);
+                    inputField.value = '';
+                }
+            }
+        }
+
+        function typeText(output, callback) {
+            const characters = output.split('');
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < characters.length) {
+                    outputArea.innerHTML += characters[index];
+                    index++;
+                    outputArea.scrollTop = outputArea.scrollHeight;
+                } else {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 50);
+        }
+
+        function addLine(text, isError = false, isWarning = false) {
+            const newParagraph = document.createElement('p');
+            if (isError) {
+                newParagraph.className = 'error';
+            } else if (isWarning) {
+                newParagraph.className = 'warning';
+            }
+            newParagraph.textContent = text;
+            outputArea.appendChild(newParagraph);
+        }
+
+        function processCommand(command) {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = ("0" + (date.getMonth() + 1)).slice(-2);
+            const day = ("0" + date.getDate()).slice(-2);
+            const time = ${year}-${month}-${day} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()};
+
+            addLine(C:\\>${command});
+
+            if (command.toLowerCase() === "adm") {
+                isAdmin = true;
+                typeText("Access granted. Admin commands are now available.", () => {
+                    isTyping = false;
+                });
+                return;
+            }
+
+            if (isAdmin) {
+                if (command.toLowerCase() === "secrets") {
+                    typeText("From a questionnaire to a cold side and a warm side. But now... the heat consumes me.", () => {
+                        isTyping = false;
+                    });
+                    return;
+                }
+
+                if (command.toLowerCase() === "documents") {
+                    addLine("[WARNING] Sorry, even though you are an admin you cannot access RattKindergarten documents.", true);
+                    isTyping = false;
+                    return;
+                }
+            } else {
+                addLine("[ERROR] Access denied. You need admin privileges to access these commands.", true);
+                isTyping = false;
+                return;
+            }
+
+            if (command.toLowerCase() === "blood") {
+                typeText("I wrote with it on the walls, the only human part of me left. And now it's all gone. There is nothing left but a cold, black void.", () => {
+                    isTyping = false;
+                });
+                return;
+            }
+
+            if (command.toLowerCase() === "carlname") {
+                typeText("Deceived, they stole his identity, his life. Now he is a creature like the others. Without memory. His tracks were erased... but not his presence.", () => {
+                    isTyping = false;
+                });
+                return;
+            }
+
+            addLine("Invalid command.", true);
+            isTyping = false;
+        }
+    </script>
+</body>
+</html>
